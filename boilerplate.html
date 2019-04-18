@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=1024, user-scalable=no"> -->
+
+  <title>Js Engine -- Yet another game engine</title>
+
+  <!-- Required stylesheet -->
+  <link rel="stylesheet" media="screen" href="core/deck.core.css">
+
+  <!-- Extension CSS files go here. Remove or add as needed. -->
+  <link rel="stylesheet" media="screen" href="extensions/goto/deck.goto.css">
+  <link rel="stylesheet" media="screen" href="extensions/menu/deck.menu.css">
+  <link rel="stylesheet" media="screen" href="extensions/navigation/deck.navigation.css">
+  <link rel="stylesheet" media="screen" href="extensions/status/deck.status.css">
+  <link rel="stylesheet" media="screen" href="extensions/scale/deck.scale.css">
+
+  <!-- Style theme. More available in /themes/style/ or create your own. -->
+  <link rel="stylesheet" media="screen" href="./web-2.0.css">
+
+  <!-- Transition theme. More available in /themes/transition/ or create your own. -->
+  <link rel="stylesheet" media="screen" href="./horizontal-slide.css">
+
+  <!-- Basic black and white print styles -->
+  <link rel="stylesheet" media="print" href="core/print.css">
+
+  <!-- Required Modernizr file -->
+  <script src="modernizr.custom.js"></script>
+
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+  <style>
+    * {
+      font-family: 'Roboto', sans-serif !important;
+    }
+
+    .deck-container {
+      background: white !important;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="title">
+    Js Engine -- Yet another game engine
+  </div>
+
+  <div class="menu">
+
+  </div>
+
+  <div class="deck-container">
+
+    <!-- Begin slides. Just make elements with a class of slide. -->
+
+    <section class="slide print">
+      <h1>Slide</h1>
+    </section>
+
+    <section class="slide print">
+      <h2>How to Make a Deck</h2>
+      <ol>
+      <li>
+        <h3>Write Slides</h3>
+        <p>Slide content is simple HTML.</p>
+      </li>
+      <li>
+        <h3>Choose Themes</h3>
+        <p>One for slide styles and one for deck transitions.</p>
+      </li>
+      …
+      </ol>
+    </section>
+
+    <section class="slide print">
+      <h2>Extensions</h2>
+      <p>Core gives you basic slide functionality...</p>
+      <ul>
+        <li class="slide">
+          <h3>deck.goto</h3>
+          <p>Adds a shortcut key to jump to any slide number...</p>
+        </li>
+        <li class="slide">...</li>
+        <li class="slide">...</li>
+        <li class="slide">...</li>
+      </ul>
+    </section>
+
+    <section class="slide print no-padding">
+      <iframe src="./draft.html" frameborder="0" width="640px" height="360px"></iframe>
+      <img class="print-content" src="./print_content/rays.png"></img>
+    </section>
+
+    <section class="slide print no-padding">
+      <img class="print-content" src="./print_content/test.png"></img>
+    </section>
+
+    <section class="slide">
+      <h1>Here</h1>
+    </section>
+
+    <section class="slide">
+      <h1>Slide</h1>
+    </section>
+
+    <section class="slide">
+      <h1>Content</h1>
+    </section>
+
+    <section class="slide">
+      <h1>Here</h1>
+    </section>
+
+    <section class="slide">
+      <h1>Slide</h1>
+    </section>
+
+    <section class="slide">
+      <h1>Content</h1>
+    </section>
+
+    <section class="slide">
+      <h1>Here</h1>
+    </section>
+
+    <!-- End slides. -->
+
+    <!-- deck.status snippet -->
+    <p class="deck-status" aria-role="status">
+      <span class="deck-status-current"></span>
+      /
+      <span class="deck-status-total"></span>
+    </p>
+
+    <!-- deck.goto snippet -->
+    <form action="." method="get" class="goto-form">
+      <label for="goto-slide">Go to slide:</label>
+      <input type="text" name="slidenum" id="goto-slide" list="goto-datalist">
+      <datalist id="goto-datalist"></datalist>
+      <input type="submit" value="Go">
+    </form>
+
+    <!-- End extension snippets. -->
+  </div>
+
+  <!-- Drawing overlay canvas -->
+  <canvas id="cc-canvas"></canvas>
+
+  <!-- Navigation links -->
+  <div class="links">
+    <a href="#" class="deck-prev-link" title="Previous">&#8592;</a>
+    <a href="#" class="deck-next-link" title="Next">&#8594;</a>
+  </div>
+
+  <!-- Drawing overlay tools -->
+  <center>
+    <div class="options">
+
+      <div id="erase" style="padding-left: 4px">
+        <svg width="22" height="22">
+          <line x1="2"  y1="2" x2="2" y2="20" style="stroke: #f00; stroke-width:2" />
+          <line x1="2" y1="20" x2="20" y2="20" style="stroke: #f00; stroke-width:2" />
+          <line x1="20" y1="20" x2="20" y2="2" style="stroke: #f00; stroke-width:2" />
+          <line x1="20" y1="2" x2="2" y2="2" style="stroke: #f00; stroke-width:2" />
+        </svg>
+      </div>
+
+      <div id="to-large" title="Large" style="padding-right: 4px">
+        <svg width="20" height="20"> <circle cx="50%" cy="50%" r="9" fill="black" /> </svg>
+      </div>
+
+      <div id="to-medium" title="Medium" style="padding-right: 2px">
+        <svg width="20" height="20"> <circle cx="50%" cy="50%" r="7" fill="black" /> </svg>
+      </div>
+
+      <div id="to-thin" title="Thin">
+        <svg width="20" height="20"> <circle cx="50%" cy="50%" r="5" fill="black" /> </svg>
+      </div>
+
+      <div onclick="toggleCanvas()" title="Toggle">
+        <svg width="32" height="20"> <rect width="100%" height="100%" fill="black" /> </svg>
+      </div>
+
+      <div id="to-red" title="Red">
+        <svg width="20" height="20"> <circle cx="50%" cy="50%" r="5" fill="red" /> </svg>
+      </div>
+
+      <div id="to-green" title="Green" style="padding-left: 2px">
+        <svg width="20" height="20"> <circle cx="50%" cy="50%" r="7" fill="green" /> </svg>
+      </div>
+
+      <div id="to-blue" title="Blue" style="padding-left: 4px">
+        <svg width="20" height="20"> <circle cx="50%" cy="50%" r="9" fill="blue" /> </svg>
+      </div>
+
+      <div id="clear" title="Clear" style="padding-left: 4px">
+        <svg height="20" width="20">
+          <line x1="0" y1="0" x2="20" y2="20" style="stroke: #f00; stroke-width:2" />
+          <line x1="20" y1="0" x2="0" y2="20" style="stroke: #f00; stroke-width:2" />
+        </svg>
+      </div>
+    </div>
+  </center>
+
+  <div class="footer">
+    Rémi Casado -- 2019
+  </div>
+
+  <!-- Drawing overlay pointers -->
+  <div id="draw-pointer"></div>
+  <div id="erase-pointer"></div>
+
+<!-- Required JS files. -->
+<script src="jquery.min.js"></script>
+<script src="core/deck.core.js"></script>
+
+<!-- Extension JS files. Add or remove as needed. -->
+<script src="extensions/menu/deck.menu.js"></script>
+<script src="extensions/goto/deck.goto.js"></script>
+<script src="extensions/status/deck.status.js"></script>
+<script src="extensions/navigation/deck.navigation.js"></script>
+<script src="extensions/scale/deck.scale.js"></script>
+
+<!-- Initialize the deck. You can put this in an external file if desired. -->
+<script>
+  $(function() {
+    $.deck('.slide'); // Starts the présentation
+
+    // Drawing overlay const
+    const ccConst = {
+      THIN: 3,
+      MEDIUM: 6,
+      LARGE: 9,
+      RED: '#d64541',
+      BLUE: '#2c82c9',
+      GREEN: '#3fc380'
+    }
+
+    // Drawing overlay struct
+    var ccCanvas = {
+      thickness :        7,         // Thickness of the pointer / drawing
+      color :            '#00f',    // Color of the pointer / drawing
+      erase :            false,     // Erase mode. True to erase, false otherwise
+      imageDatas :       [],        // Drawings ImageData, one per slide
+      currentImageData : null,      // Current drawing ImageData
+      mousePressed :     false,     // True if mouse is down, false otherwise
+      lastX :            0,         // Last X mouse position on canvas
+      lastY :            0,         // Last Y mouse position on canvas
+      canvas :           document.getElementById('cc-canvas')     // Drawing canvas element
+    }
+
+    // Set the canvas width & height, since it's dynamic css feature
+    ccCanvas.canvas.width = $('canvas').width();
+    ccCanvas.canvas.height = $('canvas').height();
+
+    // Init the drawing saves array
+    let slides = $.deck('getTopLevelSlides');
+    for(let i = 0; i < slides.length; i++) ccCanvas.imageDatas.push(null);
+
+    // Change drawing color to red
+    $('#to-red').click(function(e){
+      $('#draw-pointer').css({'background-color': ccConst.RED});
+      ccCanvas.color = ccConst.RED;
+      ccCanvas.erase = false;
+    })
+
+    // Change drawing color to green
+    $('#to-green').click(function(e){
+      $('#draw-pointer').css({'background-color': ccConst.GREEN});
+      ccCanvas.color = ccConst.GREEN;
+      ccCanvas.erase = false;
+    })
+
+    // Change drawing color to blue
+    $('#to-blue').click(function(e){
+      $('#draw-pointer').css({'background-color': ccConst.BLUE});
+      ccCanvas.color = ccConst.BLUE;
+      ccCanvas.erase = false;
+    })
+
+    // Change drawing thickness to thin
+    $('#to-thin').click(function(e){
+      $('#draw-pointer').css({'width': '6px', 'height': '6px'});
+      ccCanvas.thickness = ccConst.THIN;
+      ccCanvas.erase = false;
+    })
+
+    // Change drawing thickness to medium
+    $('#to-medium').click(function(e){
+      $('#draw-pointer').css({'width': '9px', 'height': '9px'});
+      ccCanvas.thickness = ccConst.MEDIUM;
+      ccCanvas.erase = false;
+    })
+
+    // Change drawing thickness to large
+    $('#to-large').click(function(e){
+      $('#draw-pointer').css({'width': '12px', 'height': '12px'});
+      ccCanvas.thickness = ccConst.LARGE;
+      ccCanvas.erase = false;
+    })
+
+    // Toggle erase mode
+    $('#erase').click(function(e){
+      ccCanvas.erase = !ccCanvas.erase;
+    })
+
+    // Clear drawing
+    $('#clear').click(function(e){
+      clearArea();
+    })
+
+    // When mouse is down on overlay, draw/erase.
+    $('#cc-canvas').mousedown(function (e) {
+        ccCanvas.mousePressed = true;
+        if(ccCanvas.erase){
+          let w = $('#erase-pointer').width();
+          let h = $('#erase-pointer').height();
+          let x = e.pageX - $(this).offset().left - ( w / 2 );
+          let y = e.pageY - $(this).offset().top - ( h / 2 );
+          Erase(x, y, w, h);
+        }
+        else{
+          Draw(e.pageX - $(this).offset().left, e.pageY - $(this).offset().top, false);
+        }
+    });
+
+    // When mouse moves on overlay, update cursor position & draw/erase.
+    $('#cc-canvas').mousemove(function (e) {
+      if(ccCanvas.erase){
+        let w = $('#erase-pointer').width();
+        let h = $('#erase-pointer').height();
+        let x = e.pageX - ( w / 2 );
+        let y = e.pageY - ( h / 2 );
+        let position = {top:y, left:x};
+        $('#erase-pointer').css(position);
+        if (ccCanvas.mousePressed) {
+          Erase(x - $(this).offset().left, y - $(this).offset().top, w, h);
+        }
+      }
+      else{
+        let position = {top:e.pageY - $('#draw-pointer').width() / 2, left:e.pageX - $('#draw-pointer').height() / 2};
+        $('#draw-pointer').css(position);
+        if (ccCanvas.mousePressed) {
+            Draw(e.pageX - $(this).offset().left, e.pageY - $(this).offset().top, true);
+        }
+      }
+    });
+
+    // Pretty self explanatory
+    $('#cc-canvas').mouseup(function (e) {
+        ccCanvas.mousePressed = false;
+    });
+
+    // When mouse leaves overlay, hide the cursor.
+    $('#cc-canvas').mouseleave(function (e) {
+      ccCanvas.mousePressed = false;
+      (ccCanvas.erase) ? $('#erase-pointer').css({'display':'none'}) : $('#draw-pointer').css({'display':'none'});
+    });
+
+    // When mouse enters overlay, show the cursor.
+    $('#cc-canvas').mouseenter(function (e) {
+      (ccCanvas.erase) ? $('#erase-pointer').css({'display':'block'}) : $('#draw-pointer').css({'display':'block'});
+    });
+
+    // Draw function
+    function Draw(x, y, isDown) {
+      let c = ccCanvas.canvas;
+      let ctx = c.getContext('2d');
+      let color = ccCanvas.color;
+      let thickness =  ccCanvas.thickness;
+
+      if (isDown) {
+          ctx.beginPath();
+          ctx.strokeStyle = color;
+          ctx.lineWidth = thickness;
+          ctx.lineJoin = "round";
+          ctx.moveTo(lastX, lastY);
+          ctx.lineTo(x, y);
+          ctx.closePath();
+          ctx.stroke();
+      }
+      lastX = x; lastY = y;
+      ccCanvas.currentImageData = ctx.getImageData(0, 0, c.width, c.height);
+    }
+
+    // Erase function
+    function Erase(x, y, w, h){
+      let c = ccCanvas.canvas;
+      let ctx = c.getContext('2d');
+
+      ctx.clearRect(x, y, w, h);
+    }
+
+    // Clear function
+    function clearArea() {
+      let c = ccCanvas.canvas;
+      let ctx = c.getContext('2d');
+
+      // Use the identity matrix while clearing the canvas
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, c.width, c.height);
+    }
+
+    // On slide switch, change current drawing ImageData
+    $(document).bind('deck.change', function(event, from, to) {
+      let c = ccCanvas.canvas;
+      let ctx = c.getContext('2d');
+
+      ccCanvas.imageDatas[from] = ccCanvas.currentImageData;
+      ccCanvas.currentImageData = ccCanvas.imageDatas[to];
+      ctx.clearRect(0, 0, c.width, c.height);
+      if(ccCanvas.currentImageData !== null) ctx.putImageData(ccCanvas.currentImageData, 0, 0);
+      $('#cc-canvas').removeClass('cc-show');
+    });
+
+});
+
+function toggleCanvas(){
+  $('#cc-canvas').toggleClass('cc-show');
+}
+
+
+</script>
+
+</body>
+</html>
