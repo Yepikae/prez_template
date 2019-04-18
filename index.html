@@ -405,14 +405,16 @@
 
     // On slide switch, change current drawing ImageData
     $(document).bind('deck.change', function(event, from, to) {
-      let c = ccCanvas.canvas;
-      let ctx = c.getContext('2d');
+      if(from >= 0 && to < ccCanvas.imageDatas.length){
+        let c = ccCanvas.canvas;
+        let ctx = c.getContext('2d');
 
-      ccCanvas.imageDatas[from] = ccCanvas.currentImageData;
-      ccCanvas.currentImageData = ccCanvas.imageDatas[to];
-      ctx.clearRect(0, 0, c.width, c.height);
-      if(ccCanvas.currentImageData !== null) ctx.putImageData(ccCanvas.currentImageData, 0, 0);
-      $('#cc-canvas').removeClass('cc-show');
+        ccCanvas.imageDatas[from] = ccCanvas.currentImageData;
+        ccCanvas.currentImageData = ccCanvas.imageDatas[to];
+        ctx.clearRect(0, 0, c.width, c.height);
+        if(ccCanvas.currentImageData !== null) ctx.putImageData(ccCanvas.currentImageData, 0, 0);
+        $('#cc-canvas').removeClass('cc-show');
+      }
     });
 
 });
